@@ -9,12 +9,19 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CreateAccountScreen extends StatelessWidget {
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-
+class CreateAccountScreen extends StatefulWidget {
   CreateAccountScreen({super.key});
+
+  @override
+  State<CreateAccountScreen> createState() => _CreateAccountScreenState();
+}
+
+class _CreateAccountScreenState extends State<CreateAccountScreen> {
+  final TextEditingController _passwordController = TextEditingController();
+
+  final TextEditingController _emailController = TextEditingController();
+
+  final TextEditingController _usernameController = TextEditingController();
 
   Future<void> createUser() async {
     var ref = FirebaseAuth.instance;
@@ -24,6 +31,7 @@ class CreateAccountScreen extends StatelessWidget {
         email: _emailController.text,
         password: _passwordController.text,
       );
+      Navigator.pushReplacementNamed(context, '/aboutYou');
     } catch (e) {
       print(e);
     }

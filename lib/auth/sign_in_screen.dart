@@ -8,11 +8,18 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class SignInScreen extends StatelessWidget {
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+class SignInScreen extends StatefulWidget {
 
-  SignInScreen({super.key});
+  const SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  final TextEditingController _passwordController = TextEditingController();
+
+  final TextEditingController _emailController = TextEditingController();
 
   Future<void> signIn() async {
     try {
@@ -20,6 +27,7 @@ class SignInScreen extends StatelessWidget {
         email: _emailController.text,
         password: _passwordController.text,
       );
+      Navigator.pushReplacementNamed(context, '/homepage');
     } catch (e) {
       print(e);
     }

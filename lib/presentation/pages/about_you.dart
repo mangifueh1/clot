@@ -19,7 +19,6 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
   String selectedGender = 'Men';
   final TextEditingController _usernameController = TextEditingController();
 
-  final List<String> ageRanges = ['Under 18', '18-24', '25-34', '35-44', '45+'];
 
   Future<void> setupUser() async {
     try {
@@ -31,7 +30,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
             "gender": selectedGender,
           });
 
-      // Navigator.pushReplacementNamed(context, '/homepage');
+      Navigator.pushReplacementNamed(context, '/homepage');
     } catch (e) {
       print(e);
     }
