@@ -1,37 +1,33 @@
-import 'package:clot/core/colors.dart';
-import 'package:clot/shared/widgets/bottom_rich_text.dart';
-import 'package:clot/shared/widgets/custom_confirm_button.dart';
-import 'package:clot/shared/widgets/gray_text_field.dart';
+import 'package:clot/config/colors.dart';
+import 'package:clot/features/shared/widgets/bottom_rich_text.dart';
+import 'package:clot/features/shared/widgets/custom_confirm_button.dart';
+import 'package:clot/features/shared/widgets/gray_text_field.dart';
 import 'package:clot/core/utils/space_extension.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CreateAccountScreen extends StatefulWidget {
-  CreateAccountScreen({super.key});
+class SignInScreen extends StatefulWidget {
+
+  const SignInScreen({super.key});
 
   @override
-  State<CreateAccountScreen> createState() => _CreateAccountScreenState();
+  State<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _CreateAccountScreenState extends State<CreateAccountScreen> {
+class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   final TextEditingController _emailController = TextEditingController();
 
-  final TextEditingController _usernameController = TextEditingController();
-
-  Future<void> createUser() async {
-    var ref = FirebaseAuth.instance;
-
+  Future<void> signIn() async {
     try {
-      await ref.createUserWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
-      Navigator.pushReplacementNamed(context, '/aboutYou');
+      Navigator.pushReplacementNamed(context, '/homepage');
     } catch (e) {
       print(e);
     }
@@ -50,7 +46,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Create Account",
+                  "Sign in",
                   style: TextStyle(
                     fontSize: 32.sp,
                     fontWeight: FontWeight.bold,
@@ -65,12 +61,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 ),
                 30.customH,
                 GrayTextField(
-                  prefixIcon: Icons.person_outline,
-                  controller: _usernameController,
-                  hintText: 'Username',
-                ),
-                30.customH,
-                GrayTextField(
                   prefixIcon: Icons.lock_outline,
                   controller: _passwordController,
                   hintText: 'Password',
@@ -78,18 +68,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 ),
                 30.customH,
                 CustomConfirmButton(
-                  title: 'Submit',
+                  title: 'Sign In',
                   color: mainColor,
-                  onTap: createUser,
+                  onTap: signIn,
                 ),
                 20.customH,
                 BottomRichText(
-                  info: "Already Got an Account ? ",
-                  tappable: "Sign In",
+                  info: "Don't Have An Account ? ",
+                  tappable: "Create One",
                   onTap:
                       () => Navigator.pushReplacementNamed(
                         context,
-                        '/signInScreen',
+                        '/createAccountScreen',
                       ),
                 ),
               ],

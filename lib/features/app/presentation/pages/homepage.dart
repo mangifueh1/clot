@@ -1,8 +1,11 @@
-import 'package:clot/core/config.dart';
+import 'package:clot/config/colors.dart';
+import 'package:clot/config/config.dart';
 import 'package:clot/core/utils/space_extension.dart';
-import 'package:clot/shared/widgets/custom_search_bar.dart';
-import 'package:clot/shared/widgets/catergory_card.dart';
-import 'package:clot/shared/widgets/product_card.dart';
+import 'package:clot/features/app/data/models/product_model.dart';
+import 'package:clot/features/app/data/sources/services/product_service.dart';
+import 'package:clot/features/shared/widgets/custom_search_bar.dart';
+import 'package:clot/features/app/presentation/widgets/catergory_card.dart';
+import 'package:clot/features/app/presentation/widgets/product_card.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,61 +20,31 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   int _selectedIndex = 0; // For the bottom navigation bar
+  List<ProductModel>? product;
+  List<ProductModel>? horizProduct;
   final dio = Dio();
-  var categoriesList = [];
-  var productList = [];
-  var classicProductList = [];
+  var categoriesList = [
+    {"name": "Bags", "image": ""},
+    {"name": "Books", "image": ""},
+    {"name": "Accessories", "image": ""},
+  ];
 
   void getCategories() async {
-    try {
-      Response response;
-      response = await dio.get("${baseUrl}categories");
-      if (response.statusCode == 200 && response.data is List) {
-        setState(() {
-          List<dynamic> allList = response.data;
-          categoriesList = allList.take(5).toList();
-        });
-        // print(categoriesList);
-      }
-      // print(response.data);
-    } catch (e) {
+    try {} catch (e) {
       print("Error: $e");
     }
   }
 
+  void getTopLaptops() async {
+    product = await getProducts('laptops');
+    setState(() {});
+  }
 
-  void getProducts() async {
-    try {
-      Response response;
-      response = await dio.get("${baseUrl}products");
-      if (response.statusCode == 200 && response.data is List) {
-        setState(() {
-          List<dynamic> allList = response.data;
-          productList = allList.take(10).toList();
-        });
-        // print(productList);
-      }
-      // print(response.data);
-    } catch (e) {
-      print("Error: $e");
-    }
+  void getBeautyProducts() async {
+    horizProduct = await getProducts('beauty');
+    setState(() {});
   }
-  void getClassicProducts() async {
-    try {
-      Response response;
-      response = await dio.get("${baseUrl}products/?title=sleek");
-      if (response.statusCode == 200 && response.data is List) {
-        setState(() {
-          List<dynamic> allList = response.data;
-          classicProductList = allList.take(10).toList();
-        });
-        // print(productList);
-      }
-      // print(response.data);
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -84,51 +57,63 @@ class _HomepageState extends State<Homepage> {
 
   @override
   void initState() {
-    getCategories();
-    getProducts();
-    getClassicProducts();
     super.initState();
+    getCategories();
+    getTopLaptops();
+    getBeautyProducts();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 17.0.w, vertical: 8.0.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // --- Top Bar: Profile, Dropdown, Cart ---
-              5.customH,
-              _buildTopBar(),
-              20.customH,
+      body:
+          product == null
+              ? Center(child: CircularProgressIndicator())
+              : SafeArea(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 17.0.w,
+                    vertical: 8.0.h,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // --- Top Bar: Profile, Dropdown, Cart ---
+                      5.customH,
+                      _buildTopBar(),
+                      20.customH,
 
-              // --- Search Bar ---
-              CustomSearchBar(),
-              20.customH,
+                      // --- Search Bar ---
+                      CustomSearchBar(),
+                      20.customH,
 
-              // --- Categories Section ---
-              _buildSectionHeader('Categories', showSeeAll: true),
-              12.customH,
-              _buildCategories(categoriesList),
-              20.customH,
+                      // --- Categories Section ---
+                      _buildSectionHeader('Categories', showSeeAll: true),
+                      12.customH,
+                      _buildCategories(categoriesList),
+                      20.customH,
 
-              // --- Top Selling Section ---
-              _buildSectionHeader('Top Selling', showSeeAll: true),
-              12.customH,
-              _buildProductList(true, productList, classicProductList),
-              20.customH,
+                      // --- Top Selling Section ---
+                      _buildSectionHeader(
+                        'Top Selling Computers',
+                        showSeeAll: true,
+                      ),
+                      12.customH,
+                      _buildProductList(true, product!, horizProduct!),
+                      20.customH,
 
-              // --- New In Section ---
-              _buildSectionHeader('New In', showSeeAll: true),
-              12.customH,
-              _buildProductList(false, productList, classicProductList),
-              20.customH,
-            ],
-          ),
-        ),
-      ),
+                      // --- New In Section ---
+                      _buildSectionHeader(
+                        'New In Beauty Products',
+                        showSeeAll: true,
+                      ),
+                      12.customH,
+                      _buildProductList(false, product!, horizProduct!),
+                      20.customH,
+                    ],
+                  ),
+                ),
+              ),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
@@ -139,56 +124,26 @@ class _HomepageState extends State<Homepage> {
       children: [
         // User Profile Image
         Container(
-          width: 35.w,
-          height: 35.h,
+          width: 30.w,
+          height: 30.h,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey[300]!, width: 2.r),
-            image: const DecorationImage(
-              image: NetworkImage(
-                'https://placehold.co/50x50/aabbcc/ffffff?text=User', // Placeholder image
-              ),
-              fit: BoxFit.cover,
-            ),
+            border: Border.all(color: greyShade, width: 2.r),
+            // image: const DecorationImage(
+            //   image: NetworkImage(
+            //     'https://placehold.co/50x50/aabbcc/ffffff?text=User', // Placeholder image
+            //   ),
+            //   fit: BoxFit.cover,
+            // ),
           ),
         ),
         // Men dropdown
         Container(
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(25.r),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: 'Men',
-              icon: const Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.black54,
-              ),
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500, // Medium weight
-                fontSize: 14.sp,
-              ),
-              onChanged: (String? newValue) {
-                // Handle dropdown change
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('Selected: $newValue')));
-              },
-              items:
-                  <String>['Men', 'Women'].map<DropdownMenuItem<String>>((
-                    String value,
-                  ) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-            ),
-          ),
+          width: 100.w,
+          height: 30.h,
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(25.r)),
+          child: Image.asset('assets/images/logo.png', color: mainColor),
         ),
         // Shopping Bag Icon
         InkWell(
@@ -196,19 +151,16 @@ class _HomepageState extends State<Homepage> {
             _showSnackBar('Shopping bag tapped!');
           },
           child: Container(
-            padding: EdgeInsets.all(8.r),
+            padding: EdgeInsets.all(9.r),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color:
-                  Theme.of(
-                    context,
-                  ).colorScheme.primary, // Using primary color for consistency
+              color: mainColor, // Using primary color for consistency
               // borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.shopping_bag_outlined,
               color: Colors.white,
-              size: 20.r,
+              size: 15.r,
             ),
           ),
         ),
@@ -260,18 +212,22 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  Widget _buildProductList(bool isTopSelling, List<dynamic> topSelling, List<dynamic> classic) {
+  Widget _buildProductList(
+    bool isTopSelling,
+    List<ProductModel> topSelling,
+    List<ProductModel> classic,
+  ) {
     return SizedBox(
       height: isTopSelling ? 280.h : 120.h, // Adjust height based on section
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: topSelling.length,
+        itemCount: 3,
         itemBuilder: (context, index) {
-          final product =isTopSelling?  topSelling: classic;
+          final product = topSelling;
           if (isTopSelling) {
             return VerticalProductCard(product: product, index: index);
           } else {
-            return HorizontalProductCard(product: product, index: index);
+            return HorizontalProductCard(horizProduct: classic, index: index);
           }
         },
       ),

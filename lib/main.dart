@@ -1,9 +1,10 @@
-import 'package:clot/auth/create_account_screen.dart';
-import 'package:clot/auth/sign_in_screen.dart';
+import 'package:clot/features/app/presentation/pages/category/category_list_view.dart';
+import 'package:clot/features/auth/create_account_screen.dart';
+import 'package:clot/features/auth/sign_in_screen.dart';
 import 'package:clot/firebase_options.dart';
-import 'package:clot/presentation/pages/about_you.dart';
-import 'package:clot/presentation/pages/homepage.dart';
-import 'package:clot/routes/routes.dart';
+import 'package:clot/features/app/presentation/pages/about_you.dart';
+import 'package:clot/features/app/presentation/pages/homepage.dart';
+import 'package:clot/config/routes/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
           routes: routes,
         );
       },
+      // child: CategoryListView(),
       child: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
