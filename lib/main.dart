@@ -1,19 +1,20 @@
-import 'package:clot/features/app/presentation/pages/category/category_list_view.dart';
-import 'package:clot/features/auth/create_account_screen.dart';
+import 'package:clot/features/app/presentation/pages/about_you.dart';
+import 'package:clot/features/app/presentation/pages/cart/cart_page.dart';
+import 'package:clot/features/app/presentation/pages/settings/settings_page.dart';
 import 'package:clot/features/auth/sign_in_screen.dart';
 import 'package:clot/firebase_options.dart';
-import 'package:clot/features/app/presentation/pages/about_you.dart';
 import 'package:clot/features/app/presentation/pages/homepage.dart';
 import 'package:clot/config/routes/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -36,7 +37,8 @@ class MyApp extends StatelessWidget {
           routes: routes,
         );
       },
-      // child: CategoryListView(),
+
+      // child: SettingsPage(),
       child: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {

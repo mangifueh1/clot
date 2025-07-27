@@ -4,7 +4,7 @@ import 'package:clot/core/utils/space_extension.dart';
 import 'package:clot/features/app/data/models/product_model.dart';
 import 'package:clot/features/app/data/sources/services/catergory_service.dart';
 import 'package:clot/features/app/presentation/widgets/product_card.dart';
-import 'package:clot/features/shared/widgets/back_app_bar.dart';
+import 'package:clot/features/shared/components/back_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -34,7 +34,7 @@ class _CategoryViewState extends State<CategoryView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: backAppBar(context),
+      appBar: backAppBar(context: context),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10.w),
         child:

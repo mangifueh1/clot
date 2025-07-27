@@ -30,7 +30,7 @@ class CustomConfirmButton extends StatelessWidget {
           title,
           style: TextStyle(
             fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w400,
             color: Colors.white,
           ),
         ),
